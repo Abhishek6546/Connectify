@@ -62,7 +62,8 @@ export const login = async (req, res) => {
         if(!isPasswordCorrect){
             return res.status(401).json({message: "Invalid credentials"})
         }
-        generateToken(user._id,res)
+        const token = generateToken(user._id,res);
+        console.log("JWT Token set in cookies:", token); // Added logging
 
         res.status(200).json({
             _id: user._id,
