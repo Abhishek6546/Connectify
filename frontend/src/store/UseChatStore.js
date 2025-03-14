@@ -36,15 +36,26 @@ export const useChatStore = create((set, get) => ({
 
     sendMessage: async (messageData) => {
         const { selectedUser, messages } = get();
+        if (!selectedUser) {
+            toast.error("No user selected!");
+            return;
+        }
+        
         try {
             const res = await axiosInstance.post(`/api/messages/send/${selectedUser._id}`, messageData);
+            if (!res.data) {
+                throw new Error("Empty response from server");
+            }
+    
             set((state) => ({
                 messages: [...state.messages, res.data],
             }));
         } catch (error) {
-            toast.error(error.response.data.message);
+            console.error("Error sending message:", error);
+            toast.error(error.response?.data?.message || "Failed to send message");
         }
     },
+    
 
     subscribeToMessages: () => {
         const { selectedUser } = get();
